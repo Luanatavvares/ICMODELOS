@@ -1,0 +1,41 @@
+% Parâmetros do modelo
+beta = 0.3;     % Taxa de transmissão
+gamma = 0.1;    % Taxa de recuperação
+
+% Condições iniciais
+S0 = 0.99;       % Suscetíveis inicialmente
+I0 = 0.01;       % Infectados inicialmente
+R0 = 0;          % Recuperados inicialmente
+
+% Tempo total da simulação
+MaxTime = 70;
+
+% Sistema do modelo SIR (Sem Perda de Imunidade)
+func = @(t, SIR) [-beta*SIR(1)*SIR(2); 
+                   beta*SIR(1)*SIR(2)-gamma*SIR(2); 
+                   gamma*SIR(2)];
+
+% Condições iniciais para o ode45
+inicial = [S0; I0; R0];
+
+% Resolvendo as equações diferenciais
+[t, SIR] = ode45(func, [0, MaxTime], inicial);
+
+% Extraindo os resultados
+S = SIR(:, 1);
+I = SIR(:, 2);
+R = SIR(:, 3);
+
+% Plotando os resultados
+figure;
+subplot(2, 1, 1);
+plot(t, S, 'b-', t, I, 'r-', t, R, 'g-');
+legend('Suscetíveis', 'Infectados', 'Recuperados');
+xlabel('Tempo');
+ylabel('Proporção da População');
+title('Modelo SIR Simples');
+
+subplot(2, 1, 2);
+plot(t, I, 'r-');
+xlabel('Tempo');
+ylabel('Proporção de Infectados');

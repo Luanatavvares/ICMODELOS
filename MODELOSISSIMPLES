@@ -1,0 +1,39 @@
+% Parâmetros do modelo
+beta = 0.3;     % Taxa de transmissão
+gamma = 0.1;    % Taxa de recuperação
+
+% Condições iniciais
+S0 = 0.99;       % Suscetíveis inicialmente
+I0 = 0.01;       % Infectados inicialmente
+
+% Tempo total da simulação
+MaxTime = 70;
+
+% Sistema do modelo SIS
+func = @(t, SIS) [-beta*SIS(1)*SIS(2) + gamma*SIS(2); 
+                   beta*SIS(1)*SIS(2) - gamma*SIS(2)];
+
+% Condições iniciais para o ode45
+inicial = [S0; I0];
+
+% Resolvendo as equações diferenciais
+[t, SIS] = ode45(func, [0, MaxTime], inicial);
+
+% Extraindo os resultados
+S = SIS(:, 1);
+I = SIS(:, 2);
+
+% Plotando os resultados
+figure;
+subplot(2, 1, 1);
+plot(t, S, 'b-', t, I, 'r-');
+legend('Suscetíveis', 'Infectados');
+xlabel('Tempo');
+ylabel('Proporção da População');
+title('Modelo SIS Simples');
+
+subplot(2, 1, 2);
+plot(t, I, 'r-');
+xlabel('Tempo');
+ylabel('Proporção de Infectados');
+

@@ -1,0 +1,46 @@
+% Parâmetros do modelo
+beta = 0.3;     % Taxa de transmissão
+sigma = 0.1;    % Taxa de exposição
+gamma = 0.1;    % Taxa de recuperação
+
+% Condições iniciais
+S0 = 0.99;       % Suscetíveis inicialmente
+E0 = 0.01;       % Expostos inicialmente
+I0 = 0;          % Infectados inicialmente
+R0 = 0;          % Recuperados inicialmente
+
+% Tempo total da simulação
+MaxTime = 70;
+
+% Sistema do modelo SEIR
+func = @(t, SEIR) [-beta*SEIR(1)*SEIR(3); 
+                   beta*SEIR(1)*SEIR(3)-sigma*SEIR(2); 
+                   sigma*SEIR(2)-gamma*SEIR(3);
+                   gamma*SEIR(3)];
+
+% Condições iniciais para o ode45
+inicial = [S0; E0; I0; R0];
+
+% Resolvendo as equações diferenciais
+[t, SEIR] = ode45(func, [0, MaxTime], inicial);
+
+% Extraindo os resultados
+S = SEIR(:, 1);
+E = SEIR(:, 2);
+I = SEIR(:, 3);
+R = SEIR(:, 4);
+
+% Plotando os resultados
+figure;
+subplot(2, 1, 1);
+plot(t, S, 'b-', t, E, 'm-', t, I, 'r-', t, R, 'g-');
+legend('Suscetíveis', 'Expostos', 'Infectados', 'Recuperados');
+xlabel('Tempo');
+ylabel('Proporção da População');
+title('Modelo SEIR Simples');
+
+subplot(2, 1, 2);
+plot(t, I, 'r-');
+xlabel('Tempo');
+ylabel('Proporção de Infectados');
+
